@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::{
     hash::{hash_concat, hash_data, Data, Hash, HashDirection},
     Proof,
@@ -49,13 +51,15 @@ impl MerkleTree {
     /// assert!(tree.root().is_some());
     /// ```
     pub fn construct(input: &[Data]) -> MerkleTree {
-        let num_leaves = input.len();
+        let num_leaves = input.len().next_power_of_two();
         let total_nodes = 2 * num_leaves - 1;
+        let padding_value = input.last().cloned().unwrap_or_default();
         let mut hashes: Vec<Hash> = Vec::with_capacity(total_nodes);
         hashes.extend(
             vec![Hash::default(); total_nodes - num_leaves]
                 .into_iter()
-                .chain(input.iter().map(hash_data)),
+                .chain(input.iter().map(hash_data))
+                .chain(vec![padding_value; num_leaves - input.len()]),
         );
 
         for i in (0..(total_nodes - num_leaves)).rev() {
@@ -196,20 +200,21 @@ mod tests {
     #[test]
     fn test_constructions() {
         let data = example_data(4);
-        println!("{data:?}");
         let tree = MerkleTree::construct(&data);
         let expected_root = "9675e04b4ba9dc81b06e81731e2d21caa2c95557a85dcfa3fff70c9ff0f30b2e";
         assert_eq!(hex::encode(tree.root().unwrap()), expected_root);
 
-        // Uncomment if your implementation allows for unbalanced trees
-        // let data = example_data(3);
-        // let tree = MerkleTree::construct(&data);
-        // let expected_root = "773a93ac37ea78b3f14ac31872c83886b0a0f1fec562c4e848e023c889c2ce9f";
-        // assert_eq!(hex::encode(tree.root()), expected_root);
-
         let data = example_data(8);
         let tree = MerkleTree::construct(&data);
         let expected_root = "0727b310f87099c1ba2ec0ba408def82c308237c8577f0bdfd2643e9cc6b7578";
+        assert_eq!(hex::encode(tree.root().unwrap()), expected_root);
+    }
+
+    #[test]
+    fn test_constructions_unbalanced() {
+        let data = example_data(3);
+        let tree = MerkleTree::construct(&data);
+        let expected_root = "1590ee762ca77d9058e47f79ed3407ded23cc2d3805430f43337be58ebce8806";
         assert_eq!(hex::encode(tree.root().unwrap()), expected_root);
     }
 
