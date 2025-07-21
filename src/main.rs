@@ -86,6 +86,17 @@ pub enum Commands {
         inputs: Vec<Data>,
     },
 
+    /// Prints an ASCII tree representation of the Merkle tree built from the given leaves.
+    ///
+    /// This helps visualize the structure of the tree and the hashes at each node.
+    ///
+    /// Each input should be a hex-encoded string.
+    Print {
+        /// List of hex-encoded strings to construct the Merkle tree from.
+        #[arg(required = true, value_name = "TREE LEAVES")]
+        inputs: Vec<Data>,
+    },
+
     /// Verifies that the computed Merkle root from a set of inputs matches the expected root.
     ///
     /// Useful for checking integrity of data in bulk without using a Merkle proof.
@@ -209,6 +220,10 @@ fn main() -> Result<()> {
             } else {
                 println!("❌ Not verified");
             }
+        }
+        Commands::Print { inputs } => {
+            let tree = MerkleTree::construct(&inputs);
+            println!("{tree}");
         }
     }
 

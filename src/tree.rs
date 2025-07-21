@@ -145,6 +145,42 @@ impl MerkleTree {
     }
 }
 
+impl fmt::Display for MerkleTree {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.hashes.is_empty() {
+            return writeln!(f, "MerkleTree: <empty>");
+        }
+
+        writeln!(f, "MerkleTree:")?;
+        draw_ascii_tree(&self.hashes, 0, 0, f)
+    }
+}
+
+fn draw_ascii_tree(
+    hashes: &[Hash],
+    index: usize,
+    depth: usize,
+    f: &mut fmt::Formatter<'_>,
+) -> fmt::Result {
+    if index >= hashes.len() {
+        return Ok(()); // Out of bounds (missing child)
+    }
+
+    let indent = "  ".repeat(depth);
+
+    // Draw right child first (for top-down view)
+    let right_index = 2 * index + 2;
+    draw_ascii_tree(hashes, right_index, depth + 1, f)?;
+
+    // Print current node
+    let short = hex::encode(&hashes[index][..6]);
+    writeln!(f, "{}└──── [{}] {}", indent, index, short)?;
+
+    // Then draw left child
+    let left_index = 2 * index + 1;
+    draw_ascii_tree(hashes, left_index, depth + 1, f)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

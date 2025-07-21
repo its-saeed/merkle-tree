@@ -111,6 +111,22 @@ cargo run -- verify-proof \
 # Output: ✅ Verified or ❌ Not verified
 ```
 
+#### 🌳 Print a visual ASCII representation of the tree
+This helps you visualize the Merkle structure level-by-level.
+```
+cargo run -- print 01 02 03 04
+
+# Output:
+MerkleTree:
+    └──── [6] e52d9c508c50
+  └──── [2] 75a1abcc800e
+    └──── [5] 084fed08b978
+└──── [0] 98d658fb2854
+    └──── [4] dbc1b4c900ff
+  └──── [1] 42dbeeb4eb5d
+    └──── [3] 4bf5122f3445
+```
+
 ---
 
 ## 🧠 Performance Considerations
