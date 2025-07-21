@@ -35,7 +35,7 @@ impl MerkleTree {
     /// assert!(root.is_some());
     /// ```
     pub fn root(&self) -> Option<&Hash> {
-        self.hashes.get(0)
+        self.hashes.first()
     }
 
     /// Constructs a binary Merkle tree from the given data.
@@ -66,7 +66,7 @@ impl MerkleTree {
             input
                 .iter()
                 .map(hash_data)
-                .chain(std::iter::repeat(padding_hash).take(num_leaves - input.len())),
+                .chain(std::iter::repeat_n(padding_hash, num_leaves - input.len())),
         );
 
         for i in (0..(total_nodes - num_leaves)).rev() {
@@ -134,7 +134,7 @@ impl MerkleTree {
     /// ```
     pub fn prove(&self, data: &Data) -> Option<Proof> {
         let leaf_hash = hash_data(data);
-        let num_leaves = (self.hashes.len() + 1) / 2;
+        let num_leaves = self.hashes.len().div_ceil(2);
         let leaf_start = self.hashes.len() - num_leaves;
 
         let mut index = (leaf_start..self.hashes.len()).find(|&i| self.hashes[i] == leaf_hash)?;
