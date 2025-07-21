@@ -142,7 +142,7 @@ impl MerkleTree {
         let mut proof = vec![];
         while index > 0 {
             let parent = (index - 1) / 2;
-            let (sibling_index, direction) = if index % 2 == 1 {
+            let (sibling_index, direction) = if index & 1 == 1 {
                 (index + 1, HashDirection::Right)
             } else {
                 (index - 1, HashDirection::Left)
