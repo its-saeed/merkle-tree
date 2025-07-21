@@ -186,7 +186,7 @@ fn draw_ascii_tree(
 
     // Print current node
     let short = hex::encode(&hashes[index][..6]);
-    writeln!(f, "{}└──── [{}] {}", indent, index, short)?;
+    writeln!(f, "{indent}└──── [{index}] {short}")?;
 
     // Then draw left child
     let left_index = 2 * index + 1;
