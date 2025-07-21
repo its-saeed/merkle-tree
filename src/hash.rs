@@ -8,8 +8,8 @@ use hex::FromHexError;
 use sha2::Digest;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub struct Data(pub Vec<u8>);
-pub type Hash = Data;
+pub struct Hash(pub Vec<u8>);
+pub type Data = Hash;
 
 /// Which side to put Hash on when concatinating proof hashes
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -26,11 +26,11 @@ pub fn hash_concat<T: AsRef<[u8]>>(h1: &T, h2: &T) -> Hash {
     hash_data(&[h1.as_ref(), h2.as_ref()].concat())
 }
 
-impl FromStr for Data {
+impl FromStr for Hash {
     type Err = FromHexError;
 
     fn from_str(data: &str) -> Result<Self, Self::Err> {
-        Ok(Data(hex::decode(data)?))
+        Ok(Hash(hex::decode(data)?))
     }
 }
 
@@ -40,20 +40,20 @@ impl fmt::Display for Data {
     }
 }
 
-impl Deref for Data {
+impl Deref for Hash {
     type Target = Vec<u8>;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl DerefMut for Data {
+impl DerefMut for Hash {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl AsRef<[u8]> for Data {
+impl AsRef<[u8]> for Hash {
     fn as_ref(&self) -> &[u8] {
         &self.0
     }

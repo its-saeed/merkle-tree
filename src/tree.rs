@@ -51,15 +51,22 @@ impl MerkleTree {
     /// assert!(tree.root().is_some());
     /// ```
     pub fn construct(input: &[Data]) -> MerkleTree {
+        if input.is_empty() {
+            return Self { hashes: vec![] };
+        }
+
         let num_leaves = input.len().next_power_of_two();
         let total_nodes = 2 * num_leaves - 1;
-        let padding_value = input.last().cloned().unwrap_or_default();
-        let mut hashes: Vec<Hash> = Vec::with_capacity(total_nodes);
+        let padding_hash = hash_data(input.last().unwrap());
+
+        let mut hashes = Vec::with_capacity(total_nodes);
+        hashes.resize(total_nodes - num_leaves, Hash::default());
+
         hashes.extend(
-            vec![Hash::default(); total_nodes - num_leaves]
-                .into_iter()
-                .chain(input.iter().map(hash_data))
-                .chain(vec![padding_value; num_leaves - input.len()]),
+            input
+                .iter()
+                .map(hash_data)
+                .chain(std::iter::repeat(padding_hash).take(num_leaves - input.len())),
         );
 
         for i in (0..(total_nodes - num_leaves)).rev() {
@@ -67,6 +74,7 @@ impl MerkleTree {
             let right = &hashes[2 * i + 2];
             hashes[i] = hash_concat(left, right);
         }
+
         MerkleTree { hashes }
     }
 
@@ -214,7 +222,7 @@ mod tests {
     fn test_constructions_unbalanced() {
         let data = example_data(3);
         let tree = MerkleTree::construct(&data);
-        let expected_root = "1590ee762ca77d9058e47f79ed3407ded23cc2d3805430f43337be58ebce8806";
+        let expected_root = "f2dcdd96791b6bac5d554f2d320e594b834f5da1981812c3707e7772234cb0ad";
         assert_eq!(hex::encode(tree.root().unwrap()), expected_root);
     }
 
