@@ -10,7 +10,7 @@ use crate::{
 /// ```
 /// use merkle_tree::{MerkleTree, Data};
 ///
-/// let data: Vec<Data> = vec![vec![1], vec![2], vec![3], vec![4]];
+/// let data: Vec<Data> = vec![vec![1].into(), vec![2].into(), vec![3].into(), vec![4].into()];
 /// let tree = MerkleTree::construct(&data);
 /// let root = tree.root().expect("Tree should have a root");
 /// println!("Root hash: {}", hex::encode(root));
@@ -25,9 +25,10 @@ impl MerkleTree {
     ///
     /// # Example
     /// ```
-    /// use merkle_tree::MerkleTree;
+    /// use merkle_tree::{MerkleTree, Data};
     ///
-    /// let tree = MerkleTree::construct(&[vec![1], vec![2]]);
+    /// let data: Vec<Data> = vec![vec![1].into(), vec![2].into(), vec![3].into(), vec![4].into()];
+    /// let tree = MerkleTree::construct(&data);
     /// let root = tree.root();
     /// assert!(root.is_some());
     /// ```
@@ -43,7 +44,7 @@ impl MerkleTree {
     /// ```
     /// use merkle_tree::{MerkleTree, Data};
     ///
-    /// let data: Vec<Data> = vec![vec![1], vec![2], vec![3], vec![4]];
+    /// let data: Vec<Data> = vec![vec![1].into(), vec![2].into(), vec![3].into(), vec![4].into()];
     /// let tree = MerkleTree::construct(&data);
     /// assert!(tree.root().is_some());
     /// ```
@@ -69,9 +70,9 @@ impl MerkleTree {
     ///
     /// # Example
     /// ```
-    /// use merkle_tree::MerkleTree;
+    /// use merkle_tree::{MerkleTree, Data};
     ///
-    /// let data = vec![vec![1], vec![2]];
+    /// let data: Vec<Data> = vec![vec![1].into(), vec![2].into(), vec![3].into(), vec![4].into()];
     /// let tree = MerkleTree::construct(&data);
     /// let root = tree.root().unwrap();
     /// assert!(MerkleTree::verify(&data, root));
@@ -90,7 +91,7 @@ impl MerkleTree {
     /// ```
     /// use merkle_tree::{MerkleTree, Data};
     ///
-    /// let data: Vec<Data> = vec![vec![1], vec![2], vec![3], vec![4]];
+    /// let data: Vec<Data> = vec![vec![1].into(), vec![2].into(), vec![3].into(), vec![4].into()];
     /// let tree = MerkleTree::construct(&data);
     /// let root = tree.root().unwrap();
     /// let proof = tree.prove(&data[1]).unwrap();
@@ -114,7 +115,7 @@ impl MerkleTree {
     /// ```
     /// use merkle_tree::{MerkleTree, Data};
     ///
-    /// let data: Vec<Data> = vec![vec![1], vec![2], vec![3], vec![4]];
+    /// let data: Vec<Data> = vec![vec![1].into(), vec![2].into(), vec![3].into(), vec![4].into()];
     /// let tree = MerkleTree::construct(&data);
     /// let proof = tree.prove(&data[2]);
     /// assert!(proof.is_some());
@@ -151,7 +152,7 @@ mod tests {
     fn example_data(n: usize) -> Vec<Data> {
         let mut data = vec![];
         for i in 0..n {
-            data.push(vec![i as u8]);
+            data.push(vec![i as u8].into());
         }
         data
     }
@@ -215,7 +216,7 @@ mod tests {
 
         let index = 2;
         let proof = tree.prove(&data[index]).expect("proof should exist");
-        let tampered = vec![0, 1, 2]; // invalid data
+        let tampered = vec![0, 1, 2].into(); // invalid data
         assert!(!MerkleTree::verify_proof(&tampered, &proof, &root.unwrap()));
     }
 
@@ -223,7 +224,7 @@ mod tests {
     fn test_prove_returns_none_for_missing_data() {
         let data = example_data(4);
         let tree = MerkleTree::construct(&data);
-        let not_in_tree = vec![255];
+        let not_in_tree = vec![255].into();
 
         assert!(tree.prove(&not_in_tree).is_none());
     }

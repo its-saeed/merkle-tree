@@ -6,6 +6,17 @@ edition = "2021"
 # See more keys and their definitions at
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "merkle_tree"
+path = "src/lib.rs"
+
+[[bin]]
+name = "merkle_cli"
+path = "src/main.rs"
+
+
 [dependencies]
+anyhow = "1.0.98"
+clap = { version = "4.5.41", features = ["derive"] }
 hex = "0.4.3"
 sha2 = "0.10.1"
