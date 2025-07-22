@@ -34,7 +34,7 @@ impl FromStr for Hash {
     }
 }
 
-impl fmt::Display for Data {
+impl fmt::Display for Hash {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", hex::encode(&self.0))
     }
@@ -59,7 +59,7 @@ impl AsRef<[u8]> for Hash {
     }
 }
 
-impl From<Vec<u8>> for Data {
+impl From<Vec<u8>> for Hash {
     fn from(value: Vec<u8>) -> Self {
         Self(value)
     }

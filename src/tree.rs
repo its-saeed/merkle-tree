@@ -57,7 +57,7 @@ impl MerkleTree {
 
         let num_leaves = input.len().next_power_of_two();
         let total_nodes = 2 * num_leaves - 1;
-        let padding_hash = hash_data(input.last().unwrap());
+        let padding_hash = hash_data(input.last().unwrap()); // Safe to call unwrap
 
         let mut hashes = Vec::with_capacity(total_nodes);
         hashes.resize(total_nodes - num_leaves, Hash::default());

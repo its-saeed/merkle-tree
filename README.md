@@ -20,8 +20,8 @@ A **Merkle Tree** is a binary tree where each leaf node is the hash of a piece o
 ### 🔧 Clone and Build
 
 ```bash
-git clone https://github.com/its-saeed/merkle_tree.git
-cd merkle_tree
+git clone https://github.com/its-saeed/merkle-tree.git
+cd merkle-tree
 cargo build --release
 ````
 
