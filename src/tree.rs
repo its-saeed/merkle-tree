@@ -57,22 +57,22 @@ impl MerkleTree {
 
         let num_leaves = input.len().next_power_of_two();
         let total_nodes = 2 * num_leaves - 1;
-        let padding_hash = hash_data(input.last().unwrap());
 
         let mut hashes = Vec::with_capacity(total_nodes);
-        hashes.resize(total_nodes - num_leaves, Hash::default());
+        hashes.resize(total_nodes - num_leaves, Hash(vec![]));
 
-        hashes.extend(
-            input
-                .iter()
-                .map(hash_data)
-                .chain(std::iter::repeat_n(padding_hash, num_leaves - input.len())),
-        );
+        hashes.extend(input.iter().map(hash_data));
 
         for i in (0..(total_nodes - num_leaves)).rev() {
             let left = &hashes[2 * i + 1];
             let right = &hashes[2 * i + 2];
-            hashes[i] = hash_concat(left, right);
+            let new_hash = match (left.is_empty(), right.is_empty()) {
+                (true, true) => Hash(vec![]),
+                (false, true) => left.clone(),
+                (true, false) => right.clone(),
+                (false, false) => hash_concat(left, right),
+            };
+            hashes[i] = new_hash;
         }
 
         MerkleTree { hashes }
