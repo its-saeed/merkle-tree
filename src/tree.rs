@@ -132,7 +132,7 @@ impl MerkleTree {
     /// let proof = tree.prove(&data[2]);
     /// assert!(proof.is_some());
     /// ```
-    pub fn prove(&self, data: &Data) -> Option<Proof> {
+    pub fn prove(&self, data: &Data) -> Option<Proof<'_>> {
         let leaf_hash = hash_data(data);
         let num_leaves = self.hashes.len().div_ceil(2);
         let leaf_start = self.hashes.len() - num_leaves;
